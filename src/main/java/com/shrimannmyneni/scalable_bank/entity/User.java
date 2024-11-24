@@ -34,12 +34,13 @@ public class User {
     //location userdata
     private String address;
     private String city;
-    private String state;
+    private String USState;
     private String zipCode;
 
     //account userdata
     private BigDecimal accountBalance;
     private String status;
+    private String accountNumber;
 
     @CreationTimestamp
     private LocalDateTime createdAt;
