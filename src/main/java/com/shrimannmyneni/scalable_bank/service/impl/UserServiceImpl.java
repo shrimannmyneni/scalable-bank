@@ -2,6 +2,7 @@ package com.shrimannmyneni.scalable_bank.service.impl;
 
 import com.shrimannmyneni.scalable_bank.dto.AccountInfo;
 import com.shrimannmyneni.scalable_bank.dto.BankResponse;
+import com.shrimannmyneni.scalable_bank.dto.EmailDetails;
 import com.shrimannmyneni.scalable_bank.dto.UserRequest;
 import com.shrimannmyneni.scalable_bank.entity.User;
 import com.shrimannmyneni.scalable_bank.repository.UserRepository;
@@ -10,17 +11,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+
 @Service
 public class UserServiceImpl implements UserService {
 
     @Autowired
     UserRepository userRepository;
 
+    @Autowired
+    EmailService emailService;
+
     @Override
     public BankResponse createAccount(UserRequest userRequest) {
 
         if(userRepository.existsByEmail(userRequest.getEmail())) {
-            BankResponse response = BankResponse.builder()
+            return BankResponse.builder()
                     .responseCode(AccountUtils.ACCOUNT_EXISTS_CODE)
                     .responseMessage(AccountUtils.ACCOUNT_EXISTS_MESSAGE)
                     .accountInfo(null)
@@ -49,6 +54,17 @@ public class UserServiceImpl implements UserService {
                 .build();
 
         User savedUser = userRepository.save(newUser);
+
+        EmailDetails emailDetails = EmailDetails.builder()
+                .recipient(savedUser.getEmail())
+                .subject("ACCOUNT CREATION")
+                .body("Your Shrimann Bank Account has been Successfully Created! \nAccount Details: \n" +
+                        "Account Name: "
+                + savedUser.getFirstName() + " " + savedUser.getLastName()
+                + "\nAccount Number: " + savedUser.getAccountNumber()
+                + "\nAccount Balance: $0.00")
+                .build();
+        emailService.sendEmailAlert(emailDetails);
 
         return BankResponse.builder()
                 .responseCode(AccountUtils.ACCOUNT_DNE_CODE)
