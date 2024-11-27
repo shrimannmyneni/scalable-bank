@@ -1,6 +1,7 @@
 package com.shrimannmyneni.scalable_bank.service.impl;
 
 import com.shrimannmyneni.scalable_bank.dto.EmailDetails;
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.MailException;
 import org.springframework.mail.SimpleMailMessage;
@@ -15,6 +16,9 @@ public class EmailServiceImpl implements EmailService {
     private JavaMailSender javaMailSender;
 
     @Value("${spring.mail.username}")
+    @Schema(
+            name="Sender Email"
+    )
     private String senderEmail;
 
     @Override
